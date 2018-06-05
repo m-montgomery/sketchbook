@@ -1,6 +1,18 @@
-Snake snake;
-boolean gameover;
-ArrayList<Snack> snacks;
+/*
+   AUTHOR:  Maya Montgomery
+   DATE:    6/5/18
+   
+   An implementation of the classic Snake game. Control the snake
+   with the arrow keys; you can only make a right or a left from
+   your current direction (e.g. if you are moving left, only
+   the 'down' and 'up' keys will have an effect). Snacks will
+   randomly appear on the screen; eat one and you grow slightly
+   longer. Don't hit the walls or yourself, or it's game over! 
+*/
+
+Snake snake;              // snake controlled by user
+boolean gameover;         // gameover status
+ArrayList<Snack> snacks;  // list of randomly appearing snacks
 
 void setup() {
   size(600, 600);
