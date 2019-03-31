@@ -1,3 +1,5 @@
+// A snack object that the snake attempts to eat
+
 class Snack {
 
   int x;       // center
