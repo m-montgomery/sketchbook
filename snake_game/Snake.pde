@@ -1,13 +1,22 @@
+// The Snake object
+
 class Snake {
   
+  // scales
   ArrayList<Scale> scales = new ArrayList<Scale>();
-  String direction = "down";
-  int score = 0;
   Scale head;     // first scale in the list
+  
+  // movement
+  String direction = "down";
+  int dx = 0;
+  int dy = 1;
+  
+  int score = 0;
 
   Snake(color c) {
+    setDirection(direction);
+    
     head = new Scale(width/2, height/2, 10);
-    head.setDirection(direction);
     head.setColor(c);
     scales.add(head);
   }
@@ -18,11 +27,27 @@ class Snake {
   }
   
   void move() {
-    for (Scale s : scales)
-      s.move();
+    
+    // if more than 1 scale
+    if (scales.size() > 1) {
+      
+      // remove last scale
+      scales.remove(scales.size()-1);
+    
+      // add new head scale
+      Scale newScale = new Scale(head.x, head.y, head.size);
+      newScale.setColor(head.getColor());
+      scales.add(0, newScale);
+      head = newScale;
+    }
+    
+    // move head based on current direction
+    head.x += (dx * head.size);
+    head.y += (dy * head.size);
   }
   
   boolean canEat(Snack snack) {
+    
     // compare snack to head's location
     int dx = head.x - snack.x;
     int dy = head.y - snack.y;
@@ -51,18 +76,12 @@ class Snake {
     
     // calculate start coordinates from end scale
     Scale end = scales.get(scales.size() - 1);
-    int x = end.x - (end.dx * end.size);
-    int y = end.y - (end.dy * end.size);
+    int x = end.x - (dx * end.size);
+    int y = end.y - (dy * end.size);
     
     // make new scale with same direction and color
     Scale newScale = new Scale(x, y, end.size);
-    newScale.setDirection(end.dx, end.dy);
     newScale.setColor(end.getColor());
-    
-    // copy end scale's turn queue
-    for (int i = 0; i < end.turns.size(); i += 4)
-      newScale.addTurn(end.turns.get(i),   end.turns.get(i+1), 
-                       end.turns.get(i+2), end.turns.get(i+3));
     
     // add new scale to Snake
     scales.add(newScale);
@@ -80,26 +99,26 @@ class Snake {
     
     // save new direction
     direction = dir;
-    
-    // update all scales
-    for (Scale s : scales)
-      s.addTurn(head.x, head.y, dir);
+    dx = 0;
+    dy = 0;
+    if (direction == "up")
+      dy = -1;
+    else if (direction == "down")
+      dy = 1;
+    else if (direction == "left")
+      dx = -1;
+    else if (direction == "right")
+      dx = 1;
   }
   
   boolean outOfBounds(int maxX, int maxY) {
-    for (Scale s : scales) {
-      if (s.outOfBounds(maxX, maxY))
-        return true;
-    }
-    return false;
+    return head.outOfBounds(maxX, maxY);
   }
   
   boolean selfCollision() {
-    for (int i = 0; i < scales.size(); i++) {
-      for (int j = i + 1; j < scales.size(); j++) {
-        if (scales.get(i).overlaps(scales.get(j)))
-          return true;
-      }
+    for (int i = 1; i < scales.size(); i++) {
+      if (scales.get(i).overlaps(head))
+        return true;
     }
     return false;
   }
