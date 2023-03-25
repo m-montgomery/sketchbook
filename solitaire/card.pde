@@ -36,11 +36,9 @@ class Card {
   
   float coordX;
   float coordY;
-  float coordZ;
   
   float origCoordX;
   float origCoordY;
-  float origCoordZ;
   
   boolean canMove;
   boolean showFace;
@@ -51,7 +49,6 @@ class Card {
   Card(float tempX, float tempY, Suit s, int num) {
     coordX = tempX;
     coordY = tempY;
-    coordZ = 1;
     
     suit = s;
     number = num;
@@ -136,18 +133,6 @@ class Card {
       child.displayAll();
   }
   
-  void setZ(float z) {
-    coordZ = z;
-  }
-  
-  void selected() {
-    coordZ = 100;
-  }
-  
-  void deselected() {
-    coordZ = 1;
-  }
-  
   void moveBy(float dx, float dy) {
     
     for (Object part : faceParts)
@@ -183,7 +168,6 @@ class Card {
   void saveCoords() {
     origCoordX = coordX;
     origCoordY = coordY;
-    origCoordZ = coordZ;
     
     // update child as well
     if (child != null)
@@ -193,7 +177,6 @@ class Card {
   void clearSavedCoords() {
     origCoordX = coordX;
     origCoordY = coordY;
-    origCoordZ = coordZ;
     
     // update child as well
     if (child != null)
@@ -202,7 +185,6 @@ class Card {
   
   void returnHome() {
     moveTo(origCoordX, origCoordY);
-    coordZ = origCoordZ;
     
     // update child card as well
     if (child != null)

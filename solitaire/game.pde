@@ -33,20 +33,20 @@ void setup() {
   
   // create play stacks
   for (int i = 0; i < PLAY_STACK_COUNT; i++) {
-    PlayStacks[i] = new Cardstack(CardStackType.Play, 13, true, true, false, (i * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
+    PlayStacks[i] = new Playstack(CardStackType.Play, 13, (i * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
     
     Stacks.add(PlayStacks[i]);
   }
   
   // create draw and discard stacks
-  DiscardStack = new Cardstack(CardStackType.Discard, 52, false, false, false, (5 * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
-  DrawStack = new Cardstack(CardStackType.Draw, 52, true, false, false, (6 * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
+  DiscardStack = new Discardstack(CardStackType.Discard, 52, (5 * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
+  DrawStack = new Drawstack(CardStackType.Draw, 52, (6 * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
   Stacks.add(DiscardStack);
   Stacks.add(DrawStack);
   
   // create active stacks
   for (int i = 0; i < ACTIVE_STACK_COUNT; i++) {
-    ActiveStacks[i] = new Cardstack(CardStackType.Active, MAX_STACKED_CARDS + i, false, true, true, (i * StackWidth) + StackWidthHalved, ActiveStackCoordY, StackWidth, ActiveStackHeight);//85 + (i * StackWidth), PlayStackHeight, StackWidth, ActiveStackHeight);
+    ActiveStacks[i] = new Activestack(CardStackType.Active, MAX_STACKED_CARDS + i, (i * StackWidth) + StackWidthHalved, ActiveStackCoordY, StackWidth, ActiveStackHeight);//85 + (i * StackWidth), PlayStackHeight, StackWidth, ActiveStackHeight);
     
     // deal hidden card stacks
     for (int j = 0; j < i; j++) {
