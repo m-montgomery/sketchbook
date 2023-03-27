@@ -1,8 +1,9 @@
-class Activestack extends Cardstack {
+class ActiveStack extends CardStack {
  
-  Activestack(CardStackType type, int maxCapacity, float x, float y, float w, float h) {
-    super(type, maxCapacity, x, y, w, h);
+  ActiveStack(int maxCapacity, float x, float y, float w, float h) {
+    super(CardStackType.Active, maxCapacity, x, y, w, h);
     
+    // set special height for active row stacks
     TopCardCoordY = CoordY - (Height / 2) + (MARGIN / 4) + (CARD_HEIGHT / 2);
   }
   
@@ -10,7 +11,7 @@ class Activestack extends Cardstack {
     
     // assign parent-child relationship
     if (!isEmpty()) {
-      topCard().child = card;
+      topCard().Child = card;
     }
     
     // handle card location
@@ -28,8 +29,8 @@ class Activestack extends Cardstack {
     // re-enable movement of card beneath
     if (!isEmpty()) {
       var topCard = topCard();
-      topCard.child = null;
-      topCard.canMove = true;
+      topCard.Child = null;
+      topCard.CanMove = true;
     }
   }
   
@@ -39,22 +40,22 @@ class Activestack extends Cardstack {
     
     if (isEmpty()) {
       println("Empty stack; card must be a king");
-      return card.number == 13;
+      return card.Number == 13;
     }
     
     var topCard = topCard();
-    if (!topCard.showFace) {
+    if (!topCard.ShowFace) {
       println("Top card needs to be flipped over");
       return false;
     }
       
-    if (topCard.number - 1 != card.number) {
-      println(String.format("Card %s does not match top card %s", card.number, topCard.number));
+    if (topCard.Number - 1 != card.Number) {
+      println(String.format("Card %s does not match top card %s", card.Number, topCard.Number));
       return false;
     }
       
-    if (topCard.getColor() == card.getColor()) {
-      println(String.format("Card %s does not match top card %s", card.getColor(), topCard.getColor()));
+    if (topCard.Color == card.Color) {
+      println(String.format("Card %s does not match top card %s", card.Color, topCard.Color));
       return false;
     }
       
@@ -65,10 +66,11 @@ class Activestack extends Cardstack {
     
     super.handleClick(card);
     
-    if (card == null)
+    if (card == null) {
         return;
+    }
       
-    if (!card.showFace && topCard().ID == card.ID) {
+    if (!card.ShowFace && topCard().ID == card.ID) {
       card.show();
       println("Flipping top card");
     }

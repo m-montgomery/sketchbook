@@ -5,7 +5,7 @@ enum CardStackType {
   Discard  // discard of Draw deck
 } 
 
-abstract class Cardstack {
+abstract class CardStack {
  
   int ID;
   CardStackType StackType;
@@ -20,11 +20,9 @@ abstract class Cardstack {
   float Height;
   float TopCardCoordY;
   
-  color PlayStackColor = #0a4f05;
-  
   Card[] Cards;
   
-  Cardstack(CardStackType type, int maxCapacity, float x, float y, float w, float h) {
+  CardStack(CardStackType type, int maxCapacity, float x, float y, float w, float h) {
     ID = STACK_COUNT++;
     StackType = type;
     
@@ -54,24 +52,25 @@ abstract class Cardstack {
   
   void disable() {
     for (int i = 0; i < Count; i++) {
-      Cards[i].canMove = false;
+      Cards[i].CanMove = false;
     }
   }
   
   void addCard(Card card) {
     
-    card.stack = this;
+    card.Stack = this;
     Cards[Count++] = card;
     
     println(String.format("Added card %s to %s stack %s", card.ID, StackType, ID));
     
-    if (card.child != null)
-      addCard(card.child);
+    if (card.Child != null) {
+      addCard(card.Child);
+    }
   }
   
   void removeCard(Card card) {
     
-    println(String.format("Removing card %s%s from %s stack %s", card.ID, (card.child == null ? "" : " and children"), StackType, ID));
+    println(String.format("Removing card %s%s from %s stack %s", card.ID, (card.Child == null ? "" : " and children"), StackType, ID));
     
     // locate card to remove
     int idx;
@@ -95,8 +94,9 @@ abstract class Cardstack {
   
   Card findCardAt(int x, int y) {
     for (int i = Count - 1; i >= 0; i--) {
-        if (Cards[i].contains(x, y))
+        if (Cards[i].contains(x, y)) {
           return Cards[i];
+        }
       }
     return null;
   }
@@ -105,8 +105,9 @@ abstract class Cardstack {
     
     // draw border around boundaries
     fill(215);
-    if (contains(mouseX, mouseY))
+    if (contains(mouseX, mouseY)) {
       fill(150);
+    }
     rectMode(CENTER);
     rect(CoordX, CoordY, Width, Height);
     
@@ -118,10 +119,11 @@ abstract class Cardstack {
   
   void displayBackgrounds() {
     
-    if (!isEmpty())
+    if (!isEmpty()) {
       return;
+    }
       
-    fill(PlayStackColor);
+    fill(BACKGROUND_TINT);
     noStroke();
     rect(CoordX, TopCardCoordY, CARD_WIDTH + MARGIN / 3, CARD_HEIGHT + MARGIN / 3, 10);
     stroke(0);
@@ -140,15 +142,14 @@ abstract class Cardstack {
   
   Card drawCard() {
     var card = topCard();
-    if (card != null)
+    if (card != null) {
       Cards[--Count] = null;
+    }
     return card;
   }
   
   Card topCard() {
-    if (isEmpty())
-      return null;
-    return Cards[Count - 1];
+    return isEmpty() ? null : Cards[Count - 1];
   }
   
   void flipDeck() {

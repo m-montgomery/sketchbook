@@ -1,201 +1,183 @@
-enum Suit {
-  DIAMONDS, 
-  CLUBS,
-  HEARTS, 
-  SPADES
-}
-
-StringDict SUIT_LABELS = new StringDict(new String[][] {
-  {"DIAMONDS", "♦"},
-  {"CLUBS",    "♣"},
-  {"HEARTS",   "❤"},
-  {"SPADES",   "♠"},
-});
-
-StringDict NUMBER_LABELS = new StringDict(new String[][] {
-  {  "1", "A" },
-  { "11", "J" },
-  { "12", "Q" },
-  { "13", "K" },
-});
-
-final color RED = #d82e0d;
-
-final int CARD_WIDTH  = 114; // 571
-final int CARD_HEIGHT = 178; // 889
-final int CARD_STACK_OFFSET_RATIO = 7; // display top 7th of card when stacked
-
 class Card {
   
-  Suit suit;
-  int number;
   String ID;
+  Suits Suit;
+  int Number;
+  color Color;  
   
-  ArrayList<Object> faceParts = new ArrayList();
-  ArrayList<Object> backParts = new ArrayList();
+  ArrayList<Object> FaceParts = new ArrayList();
+  ArrayList<Object> BackParts = new ArrayList();
   
-  float coordX;
-  float coordY;
+  float CoordX;
+  float CoordY;
+  float OrigCoordX;
+  float OrigCoordY;
   
-  float origCoordX;
-  float origCoordY;
+  boolean CanMove;
+  boolean ShowFace;
   
-  boolean canMove;
-  boolean showFace;
+  Card Child;
+  CardStack Stack;
   
-  Card child;
-  Cardstack stack;
-  
-  Card(float tempX, float tempY, Suit s, int num) {
-    coordX = tempX;
-    coordY = tempY;
+  Card(float x, float y, Suits suit, int number) {
+    CoordX = x;
+    CoordY = y;
     
-    suit = s;
-    number = num;
-    ID = String.format("%s %s", getNumberLabel(), suit);
+    Suit = suit;
+    Number = number;
+    Color = (Suit == Suits.SPADES || Suit == Suits.CLUBS) ? BLACK : RED;
     
-    canMove = true;
-    showFace = false;
+    var numberLabel = getNumberLabel();
+    var suitLabel = getSuitLabel();
+    ID = String.format("%s %s", numberLabel, Suit);    
+    
+    CanMove = true;
+    ShowFace = false;
     
     // add front-facing display objects
-    var rightdx = CARD_WIDTH / 3;
-    var leftdx = -rightdx;
-    var topdy = 22 + (-CARD_HEIGHT / 2);
-    var bottomdy = (CARD_HEIGHT / 2) - 7;
+    var rightDx = CARD_WIDTH / 3;
+    var leftDx = -rightDx;
+    var topDy = 22 + (-CARD_HEIGHT / 2);
+    var bottomDy = (CARD_HEIGHT / 2) - 7;
     addPart(new Cardstock(CARD_WIDTH, CARD_HEIGHT), true);    
-    addPart(new Cardlabel(getSuitLabel(), getColor(), leftdx, topdy), true);
-    addPart(new Cardlabel(getNumberLabel(), getColor(), rightdx, topdy), true);
-    addPart(new Cardlabel(getNumberLabel(), getColor(), leftdx, bottomdy), true);
-    addPart(new Cardlabel(getSuitLabel(), getColor(), rightdx, bottomdy), true);
-    for (Object part : faceParts)
-      part.moveTo(coordX, coordY);
+    addPart(new Cardlabel(suitLabel, Color, leftDx, topDy), true);
+    addPart(new Cardlabel(numberLabel, Color, rightDx, topDy), true);
+    addPart(new Cardlabel(numberLabel, Color, leftDx, bottomDy), true);
+    addPart(new Cardlabel(suitLabel, Color, rightDx, bottomDy), true);
+    for (Object part : FaceParts)
+      part.moveTo(CoordX, CoordY);
     
     // add back-facing display objects
     addPart(new Cardback(CARD_WIDTH, CARD_HEIGHT), false);
-    for (Object part : backParts)
-      part.moveTo(coordX, coordY);
+    for (Object part : BackParts)
+      part.moveTo(CoordX, CoordY);
   }
   
   void removeFromStack() {
-    stack.removeCard(this);
+    Stack.removeCard(this);
   }
   
   void addPart(Object part, boolean face) {
-    if (face)
-      faceParts.add(part);
-    else
-      backParts.add(part);
+    if (face) {
+      FaceParts.add(part);
+    }
+    else {
+      BackParts.add(part);
+    }
   }
   
   void flip() {
-    showFace = !showFace;
+    ShowFace = !ShowFace;
   }
   
   void hide() {
-    showFace = false;
+    ShowFace = false;
   }
   
   void show() {
-    showFace = true;
+    ShowFace = true;
   }
-  
-  color getColor() {
-    if (suit == Suit.SPADES || suit == Suit.CLUBS)
-      return #000000;
-    return RED;
-  }
-  
+    
   String getSuitLabel() {
-    return SUIT_LABELS.get("" + suit);
+    return SUIT_LABELS.get("" + Suit);
   }
   
   String getNumberLabel() {
-    var numberStr = "" + number;
-    if (number == 1 || number > 10)
-      return NUMBER_LABELS.get(numberStr);
-    return numberStr;
+    return NUMBER_LABELS.get("" + Number);
   }
   
   void display() {
-    if (showFace) {
-      for (Object part : faceParts)
+    if (ShowFace) {
+      for (Object part : FaceParts) {
         part.display();
+      }
     }
     else {
-      for (Object part : backParts)
+      for (Object part : BackParts) {
         part.display();
+      }
     }
   }
   
   void displayAll() {
     display();
-    if (child != null)
-      child.displayAll();
+    if (Child != null) {
+      Child.displayAll();
+    }
   }
   
   void moveBy(float dx, float dy) {
     
-    for (Object part : faceParts)
+    for (Object part : FaceParts) {
       part.moveBy(dx, dy);
+    }
       
-    for (Object part : backParts)
+    for (Object part : BackParts) {
       part.moveBy(dx, dy);
+    }
     
-    coordX += dx;
-    coordY += dy;
+    CoordX += dx;
+    CoordY += dy;
     
     // move child as well
-    if (child != null)
-      child.moveBy(dx, dy);
+    if (Child != null) {
+      Child.moveBy(dx, dy);
+    }
   }
 
   void setCoords(float x, float y) {
-    for (Object part : faceParts)
+    for (Object part : FaceParts) {
       part.moveTo(x, y);
+    }
       
-    for (Object part : backParts)
+    for (Object part : BackParts) {
       part.moveTo(x, y);
+    }
       
-    coordX = x;
-    coordY = y;
+    CoordX = x;
+    CoordY = y;
   }
 
   void moveTo(float x, float y) {
-    if (canMove) 
+    if (CanMove) {
       setCoords(x, y);
+    }
   }
   
   void saveCoords() {
-    origCoordX = coordX;
-    origCoordY = coordY;
+    OrigCoordX = CoordX;
+    OrigCoordY = CoordY;
     
     // update child as well
-    if (child != null)
-      child.saveCoords();
+    if (Child != null) {
+      Child.saveCoords();
+    }
   }
   
   void clearSavedCoords() {
-    origCoordX = coordX;
-    origCoordY = coordY;
+    OrigCoordX = CoordX;
+    OrigCoordY = CoordY;
     
     // update child as well
-    if (child != null)
-      child.clearSavedCoords();
+    if (Child != null) {
+      Child.clearSavedCoords();
+    }
   }
   
   void returnHome() {
-    moveTo(origCoordX, origCoordY);
+    moveTo(OrigCoordX, OrigCoordY);
     
     // update child card as well
-    if (child != null)
-      child.returnHome();
+    if (Child != null) {
+      Child.returnHome();
+    }
   }
   
   boolean contains(int otherX, int otherY) {
-    int ULX = int(coordX - CARD_WIDTH/2);
-    int ULY = int(coordY - CARD_HEIGHT/2);
-    int LRX = int(coordX + CARD_WIDTH/2);
-    int LRY = int(coordY + CARD_HEIGHT/2);
+    int ULX = int(CoordX - CARD_WIDTH/2);
+    int ULY = int(CoordY - CARD_HEIGHT/2);
+    int LRX = int(CoordX + CARD_WIDTH/2);
+    int LRY = int(CoordY + CARD_HEIGHT/2);
     
     return otherX >= ULX && otherX <= LRX &&
            otherY >= ULY && otherY <= LRY;

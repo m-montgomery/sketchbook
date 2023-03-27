@@ -1,12 +1,12 @@
-class Playstack extends Cardstack {
+class PlayStack extends CardStack {
  
-  Playstack(CardStackType type, int maxCapacity, float x, float y, float w, float h) {
-    super(type, maxCapacity, x, y, w, h);
+  PlayStack(int maxCapacity, float x, float y, float w, float h) {
+    super(CardStackType.Play, maxCapacity, x, y, w, h);
   }
   
   void addCard(Card card) {
     
-    card.canMove = false;
+    card.CanMove = false;
     
     // handle card location
     card.setCoords(CoordX, TopCardCoordY);
@@ -16,7 +16,7 @@ class Playstack extends Cardstack {
   }
   
   void displayBackgrounds() {
-    fill(PlayStackColor);
+    fill(BACKGROUND_TINT);
     noStroke();
     rect(CoordX, TopCardCoordY, CARD_WIDTH + MARGIN / 3, CARD_HEIGHT + MARGIN / 3, 10);
     stroke(0);
@@ -26,16 +26,19 @@ class Playstack extends Cardstack {
     
     println(String.format("%s stack %s checking logic for playing ", StackType, ID, card.ID));
       
-    if (!card.showFace)
+    if (!card.ShowFace) {
      return false;
+    }
     
-    if (card.child != null)
+    if (card.Child != null) {
       return false;
+    }
       
-    if (isEmpty())
-      return card.number == 1;
+    if (isEmpty()) {
+      return card.Number == 1;
+    }
         
     var topCard = topCard();
-    return topCard.suit == card.suit && topCard.number + 1 == card.number;
+    return topCard.Suit == card.Suit && topCard.Number + 1 == card.Number;
   }
 }

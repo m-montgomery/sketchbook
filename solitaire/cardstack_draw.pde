@@ -1,12 +1,12 @@
-class Drawstack extends Cardstack {
+class DrawStack extends CardStack {
  
-  Drawstack(CardStackType type, int maxCapacity, float x, float y, float w, float h) {
-    super(type, maxCapacity, x, y, w, h);
+  DrawStack(int maxCapacity, float x, float y, float w, float h) {
+    super(CardStackType.Draw, maxCapacity, x, y, w, h);
   }
     
   void addCard(Card card) {
     
-    card.canMove = false;
+    card.CanMove = false;
     
     // handle card location
     card.setCoords(CoordX, TopCardCoordY);

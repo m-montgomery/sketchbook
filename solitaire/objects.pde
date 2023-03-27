@@ -1,62 +1,63 @@
 
 ////////////////////////////////////////////////////
 // Object: generic base class
-class Object {
-  float coordX;
-  float coordY;
-  float coordZ;
+abstract class Object {
+  
+  float CoordX;
+  float CoordY;
   
   Object() {
-    coordX = mouseX;
-    coordY = mouseY;
+    CoordX = mouseX;
+    CoordY = mouseY;
   }
   
   void display() {}
   
   void moveTo(float x, float y) {
-    coordX = x;
-    coordY = y;
+    CoordX = x;
+    CoordY = y;
   }
   
   void moveBy(float dx, float dy) {
-    coordX += dx;
-    coordY += dy;
+    CoordX += dx;
+    CoordY += dy;
   }
 }
 
 ////////////////////////////////////////////////////
-// Cardstock: card background
+// Cardstock: card background (face)
 class Cardstock extends Object {
-  color Color = 250;
+  
+  color Color = CARDSTOCK_COLOR;
+  
   float Width;
   float Height;
   
-  int Corner = 15;
+  int CornerAngle = 15;
   
   Cardstock(float _width, float _height) {
     Width = _width;
     Height = _height;
   }
   
-  void setLocation(float xx, float yy) {
-    coordX = xx;
-    coordY = yy;
+  void setLocation(float x, float y) {
+    CoordX = x;
+    CoordY = y;
   }
   
   void display() {
     rectMode(CENTER);
     fill(Color);
-    rect(coordX, coordY, Width, Height, Corner);
+    rect(CoordX, CoordY, Width, Height, CornerAngle);
   }
 }
 
 ////////////////////////////////////////////////////
-// Cardback: card background of flipped card
+// Cardback: card background (back)
 class Cardback extends Cardstock {
-  
   Cardback(float _width, float _height) {
     super(_width, _height);
-    Color = #231d77;
+    Color = CARD_BACKGROUND_COLOR;
   }
 }
 
@@ -66,7 +67,7 @@ class Cardlabel extends Object {
   
   String Text;
   color Color;
-  float Dx;
+  float Dx;    // offset from card center
   float Dy;
   
   Cardlabel(String text, color c, float dx, float dy) {
@@ -80,6 +81,6 @@ class Cardlabel extends Object {
     fill(Color);
     textAlign(CENTER);
     textFont(createFont("SansSerif", 24));
-    text(Text, coordX + Dx, coordY + Dy);
+    text(Text, CoordX + Dx, CoordY + Dy);
   } 
 }

@@ -1,15 +1,15 @@
-class Discardstack extends Cardstack {
+class DiscardStack extends CardStack {
  
-  Discardstack(CardStackType type, int maxCapacity, float x, float y, float w, float h) {
-    super(type, maxCapacity, x, y, w, h);
+  DiscardStack(int maxCapacity, float x, float y, float w, float h) {
+    super(CardStackType.Discard, maxCapacity, x, y, w, h);
   }
   
   void addCard(Card card) {
     
     // update card movement
     if (!isEmpty()) {
-      topCard().canMove = false;
-      card.canMove = true;
+      topCard().CanMove = false;
+      card.CanMove = true;
     }
     
     // handle card location
@@ -31,8 +31,8 @@ class Discardstack extends Cardstack {
     // re-enable movement of card beneath
     if (!isEmpty()) {
       var topCard = topCard();
-      topCard.child = null;
-      topCard.canMove = true;
+      topCard.Child = null;
+      topCard.CanMove = true;
     }
   }
   

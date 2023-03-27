@@ -7,11 +7,11 @@ int STACK_COUNT = 0;
 
 ArrayList<Card> Deck = new ArrayList<Card>();
 
-Cardstack[] ActiveStacks = new Cardstack[ACTIVE_STACK_COUNT];
-Cardstack[] PlayStacks = new Cardstack[PLAY_STACK_COUNT];
-Cardstack DiscardStack;
-Cardstack DrawStack;
-ArrayList<Cardstack> Stacks = new ArrayList<Cardstack>();
+CardStack[] ActiveStacks = new CardStack[ACTIVE_STACK_COUNT];
+CardStack[] PlayStacks = new CardStack[PLAY_STACK_COUNT];
+CardStack DiscardStack;
+CardStack DrawStack;
+ArrayList<CardStack> Stacks = new ArrayList<CardStack>();
 
 boolean GameOver = false;
 
@@ -33,20 +33,19 @@ void setup() {
   
   // create play stacks
   for (int i = 0; i < PLAY_STACK_COUNT; i++) {
-    PlayStacks[i] = new Playstack(CardStackType.Play, 13, (i * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
-    
+    PlayStacks[i] = new PlayStack(13, (i * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
     Stacks.add(PlayStacks[i]);
   }
   
   // create draw and discard stacks
-  DiscardStack = new Discardstack(CardStackType.Discard, 52, (5 * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
-  DrawStack = new Drawstack(CardStackType.Draw, 52, (6 * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
+  DiscardStack = new DiscardStack(52, (5 * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
+  DrawStack = new DrawStack(52, (6 * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
   Stacks.add(DiscardStack);
   Stacks.add(DrawStack);
   
   // create active stacks
   for (int i = 0; i < ACTIVE_STACK_COUNT; i++) {
-    ActiveStacks[i] = new Activestack(CardStackType.Active, MAX_STACKED_CARDS + i, (i * StackWidth) + StackWidthHalved, ActiveStackCoordY, StackWidth, ActiveStackHeight);//85 + (i * StackWidth), PlayStackHeight, StackWidth, ActiveStackHeight);
+    ActiveStacks[i] = new ActiveStack(MAX_STACKED_CARDS + i, (i * StackWidth) + StackWidthHalved, ActiveStackCoordY, StackWidth, ActiveStackHeight);
     
     // deal hidden card stacks
     for (int j = 0; j < i; j++) {
@@ -73,8 +72,8 @@ void setup() {
 }
 
 void initDeck() {
-  var suits = new Suit[] { Suit.DIAMONDS, Suit.CLUBS, Suit.HEARTS, Suit.SPADES };
-  for (Suit suit : suits ) {
+  var suits = new Suits[] { Suits.DIAMONDS, Suits.CLUBS, Suits.HEARTS, Suits.SPADES };
+  for (Suits suit : suits ) {
     for (int num = 1; num <= 13; num++) {
       Deck.add(new Card(0, 0, suit, num));
     }
@@ -82,50 +81,50 @@ void initDeck() {
 }
 
 Card dealCard() {
-  if (Deck.isEmpty())
-    return null;
-  
-  return Deck.remove(int(random(Deck.size())));
+  return Deck.isEmpty() ? null : Deck.remove(int(random(Deck.size())));
 }
 
 void checkForWin() {
   var win = true;
   for (int i = 0; i < PLAY_STACK_COUNT; i++) {
-    if (!PlayStacks[i].isFull())
+    if (!PlayStacks[i].isFull()) {
       win = false;
+    }
   }
   
   if (win) {
     println("Win detected");
     GameOver = true;
     
-    for (Cardstack stack : Stacks) {
+    for (CardStack stack : Stacks) {
       stack.disable();
     }
   }
 }
 
 void draw() {
-  background(#0c6006);
+  background(BACKGROUND);
   
-  for (Cardstack stack : Stacks)
+  for (CardStack stack : Stacks) {
     stack.display();
+  }
   
   // if moving a card, ensure it draws over everything else
-  if (SelectedCard != null && SelectedCard.canMove)
+  if (SelectedCard != null && SelectedCard.CanMove) {
     SelectedCard.displayAll();
+  }
     
   if (GameOver) {
     fill(240);
     textSize(100);
     textAlign(CENTER);
-    text("You won!", width / 2, height / 2);
+    text("You won!", width / 2, 3 * (height / 4));
   }
 }
 
 Card findCardAtMouse() {
  Card card;
- for (Cardstack stack : Stacks) {
+ for (CardStack stack : Stacks) {
    card = stack.findCardAt(mouseX, mouseY);
    if (card != null) {
       return card;
@@ -136,22 +135,23 @@ Card findCardAtMouse() {
 
 void mousePressed() {
   SelectedCard = findCardAtMouse();
-  if (SelectedCard != null)
-    SelectedCard.saveCoords(); 
+  if (SelectedCard != null) {
+    SelectedCard.saveCoords();
+  }
 }
 
 void mouseReleased() {
   
   // move any selected card to correct spot
   var movedToStack = false;
-  for (Cardstack stack : Stacks) {
+  for (CardStack stack : Stacks) {
     if (stack.contains(mouseX, mouseY)) {
       
       // with active card
       if (SelectedCard != null) {
         
         // handle click on same stack
-        if (stack.ID == SelectedCard.stack.ID) {
+        if (stack.ID == SelectedCard.Stack.ID) {
           stack.handleClick(SelectedCard);
         }
       
@@ -172,16 +172,17 @@ void mouseReleased() {
     }
   }
   
-  if (SelectedCard != null && !movedToStack)
+  if (SelectedCard != null && !movedToStack) {
     SelectedCard.returnHome();
+  }
   
   SelectedCard = null;
 }
 
 void mouseDragged() {
-  if (SelectedCard != null && SelectedCard.canMove) {
-    float dx = mouseX - SelectedCard.coordX;
-    float dy = mouseY - SelectedCard.coordY;
+  if (SelectedCard != null && SelectedCard.CanMove) {
+    float dx = mouseX - SelectedCard.CoordX;
+    float dy = mouseY - SelectedCard.CoordY;
     SelectedCard.moveBy(dx, dy);
   }
 }
