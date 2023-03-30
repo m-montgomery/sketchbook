@@ -1,9 +1,6 @@
 
 final int ACTIVE_STACK_COUNT = 7;
 final int PLAY_STACK_COUNT = 4;
-final int MAX_STACKED_CARDS = 19;
-final int MARGIN = 20;
-int STACK_COUNT = 0;
 
 ArrayList<Card> Deck = new ArrayList<Card>();
 
@@ -12,6 +9,7 @@ CardStack[] PlayStacks = new CardStack[PLAY_STACK_COUNT];
 CardStack DiscardStack;
 CardStack DrawStack;
 ArrayList<CardStack> Stacks = new ArrayList<CardStack>();
+int STACK_COUNT = 0;
 
 boolean GameOver = false;
 
@@ -181,8 +179,8 @@ void mouseReleased() {
 
 void mouseDragged() {
   if (SelectedCard != null && SelectedCard.CanMove) {
-    float dx = mouseX - SelectedCard.CoordX;
-    float dy = mouseY - SelectedCard.CoordY;
+    float dx = mouseX - SelectedCard.CoordX + SelectedCard.MoveDx;
+    float dy = mouseY - SelectedCard.CoordY + SelectedCard.MoveDy;
     SelectedCard.moveBy(dx, dy);
   }
 }

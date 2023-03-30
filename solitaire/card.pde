@@ -10,8 +10,10 @@ class Card {
   
   float CoordX;
   float CoordY;
-  float OrigCoordX;
-  float OrigCoordY;
+  float CoordXHistory;
+  float CoordYHistory;
+  float MoveDx;
+  float MoveDy;
   
   boolean CanMove;
   boolean ShowFace;
@@ -145,8 +147,10 @@ class Card {
   }
   
   void saveCoords() {
-    OrigCoordX = CoordX;
-    OrigCoordY = CoordY;
+    MoveDx = CoordX - mouseX;
+    MoveDy = CoordY - mouseY;
+    CoordXHistory = CoordX;
+    CoordYHistory = CoordY;
     
     // update child as well
     if (Child != null) {
@@ -155,8 +159,10 @@ class Card {
   }
   
   void clearSavedCoords() {
-    OrigCoordX = CoordX;
-    OrigCoordY = CoordY;
+    MoveDx = 0;
+    MoveDy = 0;
+    CoordXHistory = CoordX;
+    CoordYHistory = CoordY;
     
     // update child as well
     if (Child != null) {
@@ -165,7 +171,7 @@ class Card {
   }
   
   void returnHome() {
-    moveTo(OrigCoordX, OrigCoordY);
+    moveTo(CoordXHistory, CoordYHistory);
     
     // update child card as well
     if (Child != null) {
