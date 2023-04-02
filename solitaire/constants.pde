@@ -8,6 +8,8 @@ final color BACKGROUND_TINT = #0a4f05;
 final color CARD_BACKGROUND_COLOR = #231d77;
 final color CARDSTOCK_COLOR = 250;
 
+final color BUTTON_COLOR = #bababa;
+
 final int MAX_STACKED_CARDS = 19;
 final int MARGIN = 20;
 

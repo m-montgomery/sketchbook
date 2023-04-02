@@ -84,3 +84,63 @@ class Cardlabel extends Object {
     text(Text, CoordX + Dx, CoordY + Dy);
   } 
 }
+
+////////////////////////////////////////////////////
+// Button
+class Button extends Object {
+  
+  float Width;
+  float Height;
+  color Color;
+  float RectAngle;
+  
+  Button(float x, float y, float w, float h, color c) {
+    CoordX = x;
+    CoordY = y;
+    Width = w;
+    Height = h;
+    Color = c;
+    RectAngle = 5;
+  }
+  
+  void display() {
+    rectMode(CENTER);
+    fill(Color);
+    rect(CoordX, CoordY, Width, Height, RectAngle);
+  }
+  
+  boolean contains(int otherX, int otherY) {
+    int ULX = int(CoordX - Width/2);
+    int ULY = int(CoordY - Height/2);
+    int LRX = int(CoordX + Width/2);
+    int LRY = int(CoordY + Height/2);
+    
+    return otherX >= ULX && otherX <= LRX &&
+           otherY >= ULY && otherY <= LRY;
+  }
+}
+
+////////////////////////////////////////////////////
+// NewGameButton
+class NewGameButton extends Button {
+  
+  float Width;
+  float Height;
+  color Color;
+  
+  NewGameButton(float x, float y, color c) {
+    super(x, y, 30, 20, c);
+    Width = 30;
+    Height = 20;
+    CoordY -= Height;
+  }
+  
+  void display() {
+    super.display();
+    
+    fill(BLACK);
+    textAlign(CENTER);
+    textFont(createFont("SansSerif", 12));
+    text("New", CoordX, CoordY + 5);
+  }
+}

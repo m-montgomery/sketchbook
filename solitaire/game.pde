@@ -12,6 +12,7 @@ ArrayList<CardStack> Stacks = new ArrayList<CardStack>();
 int STACK_COUNT = 0;
 
 boolean GameOver = false;
+Button NewGameButton;
 
 Card SelectedCard;
 
@@ -19,7 +20,14 @@ Card SelectedCard;
 void setup() {
   size(1050, 920);
   
+  newGame();
+}
+
+void newGame() {
+  
   initDeck();
+  Stacks = new ArrayList<CardStack>();
+  STACK_COUNT = 0;
   
   // define size of areas
   var StackWidth = width / 7;
@@ -30,6 +38,7 @@ void setup() {
   var ActiveStackCoordY = height - (ActiveStackHeight / 2);
   
   // create play stacks
+  PlayStacks = new CardStack[PLAY_STACK_COUNT];
   for (int i = 0; i < PLAY_STACK_COUNT; i++) {
     PlayStacks[i] = new PlayStack(13, (i * StackWidth) + StackWidthHalved, PlayStackCoordY, StackWidth, PlayStackHeight);
     Stacks.add(PlayStacks[i]);
@@ -42,6 +51,7 @@ void setup() {
   Stacks.add(DrawStack);
   
   // create active stacks
+  ActiveStacks = new CardStack[ACTIVE_STACK_COUNT];
   for (int i = 0; i < ACTIVE_STACK_COUNT; i++) {
     ActiveStacks[i] = new ActiveStack(MAX_STACKED_CARDS + i, (i * StackWidth) + StackWidthHalved, ActiveStackCoordY, StackWidth, ActiveStackHeight);
     
@@ -67,9 +77,16 @@ void setup() {
     card.hide();
     card = dealCard();
   }
+  
+  // set up buttons
+  NewGameButton = new NewGameButton(DrawStack.CoordX + (StackWidth / 4), DrawStack.TopCardCoordY - (CARD_HEIGHT / 2), BUTTON_COLOR);
+  
+  SelectedCard = null;
+  GameOver = false;
 }
 
 void initDeck() {
+  Deck.clear();
   var suits = new Suits[] { Suits.DIAMONDS, Suits.CLUBS, Suits.HEARTS, Suits.SPADES };
   for (Suits suit : suits ) {
     for (int num = 1; num <= 13; num++) {
@@ -103,6 +120,7 @@ void checkForWin() {
 void draw() {
   background(BACKGROUND);
   
+  // display card stacks
   for (CardStack stack : Stacks) {
     stack.display();
   }
@@ -111,7 +129,11 @@ void draw() {
   if (SelectedCard != null && SelectedCard.CanMove) {
     SelectedCard.displayAll();
   }
-    
+  
+  // display buttons
+  NewGameButton.display();
+  
+  // display win scenario
   if (GameOver) {
     fill(240);
     textSize(100);
@@ -139,6 +161,13 @@ void mousePressed() {
 }
 
 void mouseReleased() {
+  
+  // start over
+  if (NewGameButton.contains(mouseX, mouseY)) {
+    println("Starting new game...");
+    newGame();
+    return;
+  }
   
   // move any selected card to correct spot
   var movedToStack = false;
